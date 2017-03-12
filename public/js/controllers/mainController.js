@@ -1,7 +1,11 @@
 app.controller('beerCtrl', function($scope, beerService){
   $scope.beers = beerService.beers;
-  $scope.remove = beerService.remove;
+  $scope.deleteBeer = beerService.deleteBeer;
   $scope.getAvg = beerService.getAvg;
+$scope.put = function(beer, index){
+  beerService.updateBeer(beer, index);
+  beerService.getBeers();
+}
 
   $scope.addToBeers = function(){
     var res = {
@@ -9,11 +13,15 @@ app.controller('beerCtrl', function($scope, beerService){
       style: $scope.style,
       abv: $scope.abv,
       image_url: $scope.image,
+      ratings: 0,
+      numRate: 0
     };
-    $scope.addBeer(res);
+    beerService.postBeer(res);
+    beerService.getBeers();
   };//addToBeers
-  $scope.rate = function(beer){
-    beerService.updateAvg(parseInt(beer.currentRating), beer);
+  $scope.rate = function(beer){    
+    beerService.updateRate(beer);
+    beerService.getBeers();
   }//rate adds the rating, and updates the average for the beer
   var sortConst=0;
   $scope.beerSort = function(){
@@ -36,4 +44,5 @@ sortConst++;
       $scope.enable = true;
     }//else
   }
+  beerService.getBeers();
 });
