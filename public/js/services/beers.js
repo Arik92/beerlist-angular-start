@@ -1,26 +1,5 @@
 app.factory('beerService', function($http){
-  var beers = [];
-
-  var getBeer = function(name){
-    for (var i = 0;i< beers.length;i++){
-      if (beers[i].name===name) {
-        return beers[i];
-      }//if
-    }//for
-  };//getBeer
-  var getidByIndex = function(index) {
-    for (var i = 0;i<= index;i++) {
-      if (i===index) return beers[i]._id;
-    }
-    return "not found";
-  }//getBeerByIndex
-  var addBeer = function(beer) {
-    beers[beers.length] = beer;
-  };
-  var remove = function(index) {
-        beers.splice(index,1);
-  }//remove
-
+        //make everything that has anything to do with the index send the beer as the parameter
 var getAvg = function(beer) {
   if (beer.numRate!==0) {
     beer.currAvg= (beer.ratings/beer.numRate);
@@ -33,7 +12,7 @@ var getAvg = function(beer) {
 var getBeers = function() {
   return $http.get('/beers')
     .then(function(response) {
-      angular.copy(response.data, beers);
+      return response.data;
     }, function(err) {
       console.error(err)
     });
@@ -41,46 +20,40 @@ var getBeers = function() {
 var postBeer = function(beer) {
   return $http.post('/beers',beer)
     .then(function(response) {
-      angular.copy(response.data, beers);
+      return response.data;
     }, function(err) {
       console.error(err)
     });
 };
 
-var deleteBeer = function(index) {
-  var id = getidByIndex(index);
-  return $http.delete('/beers/' + id) //delete the beer from mongo
+var deleteBeer = function(beer) {
+  return $http.delete('/beers/' + beer._id) //delete the beer from mongo
     .then(function(response) {
-      remove(index);
+      return response.data;
       getBeers();
     }, function(err) {
       console.error(err)
     });
 }
-var updateBeer = function(beer, index) {
+var updateBeer = function(beer) {
   return $http.put('/beers/'+beer._id, beer)
   .then(function(response) {
-    beers[index] = response.data;
-    //angular.copy(response.data, beers);// Still problamatic??
+    return response.data;
     }, function(err) {
     console.error(err)
   });
 }
-var updateRate = function(beer, index) {
+var updateRate = function(beer) {
   return $http.put('/beers/rate/'+beer._id, beer)
   .then(function(response) {
-    beers[index] = response.data;
+    return response.data;
     //angular.copy(response.data, beers);// Still problamatic??
     }, function(err) {
     console.error(err)
   });
 }
 
-
   return {
-    beers: beers,
-    addBeer: addBeer,
-    getBeer: getBeer,
     getAvg: getAvg,
     getBeers: getBeers,
     postBeer: postBeer,
