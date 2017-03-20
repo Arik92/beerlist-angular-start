@@ -48,12 +48,11 @@ app.delete("/beers/:id",function(req,res){
 });
 });
 app.put('/beers/:id', function(req, res, next) {
-  Beer.findOneAndUpdate({ _id: req.params.id },  {$set:  {name: req.body.name, style: req.body.style, abv: req.body.abv, image_url: req.body.image_url, ratings: req.body.ratings, numRate: req.body.numRate}}, { new: true }, function(err, beer) {
-    if (err) {
-      console.error(err)
-      return next(err);
+  Beer.findByIdAndUpdate(req.params.id, req.body, { new: true }, function(error, beer) {
+    if (error) {
+      console.error(error)
+      return next(error);
     } else {
-      console.log(beer);
       res.send(beer);
     }
   });

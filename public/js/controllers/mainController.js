@@ -1,4 +1,5 @@
 app.controller('beerCtrl', function($scope, beerService){
+  $scope.tempBeers=[];
   $scope.deleteBeer = function(beer){
     beerService.deleteBeer(beer).then(function(){
       $scope.update();
@@ -7,10 +8,13 @@ app.controller('beerCtrl', function($scope, beerService){
     })//err
   }//deleteBeer
 
+
   $scope.getAvg = beerService.getAvg; //rating calculation
 
-$scope.put = function(beer){
-  beerService.updateBeer(beer).then(function(){
+$scope.put = function(index){
+  beerService.updateBeer($scope.beers[index]).then(function(response){
+    $scope.beers[index] = response.data;
+    $scope.tempBeers[index] = null;
     $scope.update();
   },function(err){
     console.log(err);
@@ -53,14 +57,15 @@ $scope.put = function(beer){
     }//else
     sortConst++;
   }//beerSort
-  $scope.enable=false;
-  $scope.enableShift = function() {
-    if ($scope.enable) {
-      $scope.enable = false;
+
+  $scope.enableShift = function(beer, index) {
+    if ($scope.tempBeers[index]) {
+      $scope.beers[index] = $scope.tempBeers[index];
+      $scope.tempBeers[index]= null;
     } else {
-      $scope.enable = true;
-    }//else
+      $scope.tempBeers[index] = angular.copy(beer);
   };//                                        SORT
+}// enableShift
 
   $scope.update = function(){
     beerService.getBeers().then(function(dataB) {
@@ -70,4 +75,5 @@ $scope.put = function(beer){
         });
   }// update
   $scope.update();
+
 });

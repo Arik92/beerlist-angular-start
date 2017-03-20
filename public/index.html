@@ -5,23 +5,23 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
-<body ng-app="beerList">
+<body ng-app="beerList" >
     <div class="container" ng-controller = "beerCtrl">
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
                 <h1 class="text-center">BeerList</h1>
                 <div class="page-header">
                   <button type="button" class="btn btn-success" ng-click="beerSort()">sort!</button>
-                  <button type="button" class ="btn btn-success" ng-click="enableShift()">Edit1</button>
+
                 </div>
                 <!-- render beers here -->
-                <div class="render col-md-4" ng-repeat="beer in beers track by $index">
+                <div class="render col-md-4"  ng-repeat="beer in beers track by $index">
                  <div class="img-container">
                   <img ng-src="{{beer.image_url}}">
                 </div>
-                <h1>name: {{beer.name}}</h1><input type="text" ng-if="enable" ng-model="beer.name">
-                <h4> abv: {{beer.abv}}%</h4><input type="text" ng-if="enable" ng-model="beer.abv">
-                <p>style: {{beer.style}}</p><input type="text" ng-if="enable" ng-model="beer.style">
+                <h1 ng-if="!tempBeers[$index]">name: {{beer.name}}</h1><input type="text" ng-if="tempBeers[$index]" ng-model="beer.name">
+                <h4 ng-if="!tempBeers[$index]"> abv: {{beer.abv}}%</h4><input type="text" ng-if="tempBeers[$index]" ng-model="beer.abv">
+                <p ng-if="!tempBeers[$index]">style: {{beer.style}}</p><input type="text" ng-if="tempBeers[$index]" ng-model="beer.style">
                 <p>The average rating for this beer is: </p>{{getAvg(beer)}}
                 <br/>
                 Rate this beer
@@ -34,7 +34,9 @@
                 </select>
                 <button type="button" ng-click="rate(beer)">Rate!</button>
                 <button type="button" class="btn btn-danger" ng-click="deleteBeer(beer)">Remove</button>
-                <button type="button" class="btn btn-info " ng-if="enable" ng-click="put(beer)">Save changes</button>
+                <button type="button" class ="btn btn-success" ng-if="!tempBeers[$index]" ng-click="enableShift(beer, $index)">Edit beer</button>
+                <button type="button" class ="btn btn-warning" ng-if="tempBeers[$index]" ng-click="enableShift(beer, $index)">Cancel</button>
+                <button type="button" class="btn btn-info " ng-if="tempBeers[$index]" ng-click="put($index)">Save changes</button>
               </div>
               <div class="col-md-12">
                 <form ng-submit="addToBeers()">

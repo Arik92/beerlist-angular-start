@@ -46,8 +46,7 @@ var updateBeer = function(beer) {
 var updateRate = function(beer) {
   return $http.put('/beers/rate/'+beer._id, beer)
   .then(function(response) {
-    return response.data;
-    //angular.copy(response.data, beers);// Still problamatic??
+    return response.data;    
     }, function(err) {
     console.error(err)
   });

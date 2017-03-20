@@ -1,3 +1,14 @@
 img {
   width:100%;
 }
+h1 {
+  font-family: cursive;  
+}
+.render {
+  font-family: "Comic Sans MS";
+  background-color: goldenrod;
+}
+body {
+  background-image: url("pub.jpg");
+  background-color: black;
+}
