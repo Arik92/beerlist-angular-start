@@ -1,71 +1,43 @@
 var express = require('express');
+var expressSession = require('express-session');
+var bodyParser = require('body-parser');
+var passport = require('passport');
+var localStrategy = require('passport-local').strategy;
+var mongoose = require('mongoose');
+var beerRoutes = require('./routes/beerRoutes');
+var userRoutes = require('./routes/userRoutes');
+var User = require('./models/userModel');
 var app = express();
 
-var bodyParser = require('body-parser');
+mongoose.connect("mongodb://localhost/beers");
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var mongoose = require('mongoose');
-mongoose.connect("mongodb://localhost/beers");
-var Beer = require("./BeerModel");
+app.use(expressSession({ secret: 'thisIsASecret', resave: false, saveUninitialized: false }));;
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(User.createStrategy());
+passport.seriizeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use('/beers', beerRoutes);
+app.use('/users', userRoutes);
 app.use(express.static('public'));
 app.use(express.static('node_modules'));
 
-app.get('/', function(req, res) {
-  res.send('Testing Server')
-});
-app.get('/beers', function (req, res, next) {
-  Beer.find(function(error, result){
-    if (error) {
-      console.log(error);
-    } else {
-      res.send(result);
-    }//else
-  })//find()
 
-});//get /beers
-app.post('/beers', function (req, res, next) {
-  var b = new Beer(req.body);
-  b.save(function(error, result){
-    if (error) {
-      console.log(error);
-    } else {
-      res.send(result);
-    }//else
-  });
-  //res.send('POST!');
+app.all('*', function(req, res) {
+  res.sendFile(__dirname + "/public/index.html");
 });
 
-app.delete("/beers/:id",function(req,res){
-  Beer.findOneAndRemove({ _id: req.params.id }, function(err, beer) {
-    if (err) {
-      console.log(err);
-      res.send("err");
-    }  else {
-      console.log(beer);
-      res.send(beer);
-    }
-});
-});
-app.put('/beers/:id', function(req, res, next) {
-  Beer.findByIdAndUpdate(req.params.id, req.body, { new: true }, function(error, beer) {
-    if (error) {
-      console.error(error)
-      return next(error);
-    } else {
-      res.send(beer);
-    }
-  });
-});
-app.put('/beers/rate/:id', function(req, res, next) {
-  Beer.findOneAndUpdate({ _id: req.params.id },  {$inc:  {ratings: req.body.currentRating, numRate: 1}}, { new: true }, function(err, beer) {
-    if (err) {
-      console.error(err)
-      return next(err);
-    } else {
-      console.log(beer);
-      res.send(beer);
-    }
+//main error handler
+// warning - not for use in production code!
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.send({
+    message: err.message,
+    error: err
   });
 });
 

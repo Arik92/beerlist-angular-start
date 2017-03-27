@@ -46,13 +46,22 @@ var updateBeer = function(beer) {
 var updateRate = function(beer) {
   return $http.put('/beers/rate/'+beer._id, beer)
   .then(function(response) {
-    return response.data;    
+    return response.data;
     }, function(err) {
     console.error(err)
   });
 }
+var getBeerById = function(reqId) {
+  return $http.get('/beers/'+reqId).then(function(response){
+    console.log("the beer gotten by factory is "+response.data);
+    return response.data;
+  }, function(err){
+    console.error(err);
+  })
+}
 
   return {
+    getBeerById: getBeerById,
     getAvg: getAvg,
     getBeers: getBeers,
     postBeer: postBeer,

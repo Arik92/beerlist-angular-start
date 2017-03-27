@@ -1,0 +1,6 @@
+<div class = "container">
+<h1>The beer is {{beer.name}}. its reviews are:</h1>
+<ul>
+  <li ng-repeat ="review in beer.reviews track by $index"> {{review.userName}} said: {{review.comment}}</li>
+</ul>
+</div>
